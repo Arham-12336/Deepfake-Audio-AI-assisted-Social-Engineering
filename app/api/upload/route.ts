@@ -24,7 +24,7 @@ export async function POST(
     const bytes = await file.arrayBuffer();
     const audioFile = Buffer.from(bytes)
 
-    const path = join('/', 'audio', file.name)
+    const path = join(process.cwd(), 'audio', file.name)
     await writeFile(path, audioFile);
     const audioUrl =
         `C:/audio/${file.name}`;

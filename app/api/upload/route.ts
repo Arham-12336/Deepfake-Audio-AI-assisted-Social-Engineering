@@ -23,13 +23,14 @@ export async function POST(
     }
     const bytes = await file.arrayBuffer();
     const audioFile = Buffer.from(bytes)
-
-    const path = join(process.cwd(), 'audio', file.name)
+    const path = join(process.cwd(), '/audio', file.name)
+    console.log("path: ", path)
     await writeFile(path, audioFile);
     const audioUrl =
-        `C:/audio/${file.name}`;
+        `${process.cwd()}\\audio\\${file.name}`;
     console.log("audio url:", audioUrl)
     const audio_transcript = await speechToText(audioUrl);
+
 
     const deepfake_result = new Promise((resolve, reject) => {
         exec(`python test.py ${audioUrl}`, (error, stdout, stderr) => {
@@ -41,15 +42,8 @@ export async function POST(
         });
     })
 
-    console.log("checking python result: ", await deepfake_result)
+    console.log("Deep Fake result: ", await deepfake_result)
 
-
-    // const audio_transcript = `Transcript of Audio Recording:
-    // [00:00:00] Speaker 1: Hi, it's Mark. Just wanted to check if you're still available for our meeting tomorrow at 10 a.m.?
-    // [00:00:10] Speaker 2: Hi Mark, yes, I'm still available. Looking forward to it.
-    // [00:00:15] Speaker 1: Great, see you then. Have a good day!
-    // [00:00:20] Speaker 2: You too, bye!
-    // `
 
     const response = await AnalysisChain().call({
         input: audio_transcript

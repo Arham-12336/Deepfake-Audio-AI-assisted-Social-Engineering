@@ -1,8 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { NextRequest, NextResponse } from "next/server";
+import { exec } from 'child_process';
 import { speechToText } from "@/utils/speechtotext";
 import { AnalysisChain, probabiltyChain } from "@/utils/gptanalysis";
-import { join } from "path";
+import { join, resolve } from "path";
 import { writeFile } from "fs/promises";
 import { Utils } from "@/utils/utils";
 
@@ -24,13 +25,25 @@ export async function POST(
     const audioFile = Buffer.from(bytes)
 
     const path = join('/', 'audio', file.name)
-    await writeFile(path, audioFile)
-
-
+    await writeFile(path, audioFile);
     const audioUrl =
         `C:/audio/${file.name}`;
-
+    console.log("audio url:", audioUrl)
     const audio_transcript = await speechToText(audioUrl);
+
+    const deepfake_result = new Promise((resolve, reject) => {
+        exec(`python test.py ${audioUrl}`, (error, stdout, stderr) => {
+            if (error) {
+                console.error('Error executing Python script:', error);
+                reject(error);
+            }
+            resolve(stdout)
+        });
+    })
+
+    console.log("checking python result: ", await deepfake_result)
+
+
     // const audio_transcript = `Transcript of Audio Recording:
     // [00:00:00] Speaker 1: Hi, it's Mark. Just wanted to check if you're still available for our meeting tomorrow at 10 a.m.?
     // [00:00:10] Speaker 2: Hi Mark, yes, I'm still available. Looking forward to it.
@@ -52,6 +65,6 @@ export async function POST(
 
 
     console.log("finallly");
-    return NextResponse.json({ success: true, result: probability })
+    return NextResponse.json({ success: true, analysis_result: probability, deepfake_result: await deepfake_result })
 
 }

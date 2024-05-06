@@ -1,12 +1,15 @@
 "use client";
 import Layout from "@/components/layout";
-import { load } from "langchain/load";
 import React, { useState } from "react";
+
+import { Utils } from "@/utils/utils";
+
+const utils = new Utils();
 
 const Dashboard = () => {
   const [state, setState] = useState("ready");
   const [percentage, setPercentage] = useState<any>();
-  const [messageState, setMessageState] = useState<any>();
+  const [dfResult, setDFResult] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [upload, setUploading] = useState<boolean>(false);
   const [file, setfile] = useState<File>();
@@ -28,7 +31,9 @@ const Dashboard = () => {
       });
       if (res.ok) {
         let data = await res.json();
-        setPercentage(data.result.percentage);
+        console.log("data : ", data.result);
+        setPercentage(data.analysis_result);
+        setDFResult(data.deepfake_result);
       }
     } catch (e) {
       console.error(e);
@@ -43,6 +48,9 @@ const Dashboard = () => {
     setfile(target.files[0]);
     setUploading(true);
   };
+  const ratingResult = utils.alertChecker(dfResult, percentage);
+  console.log(percentage);
+  console.log(dfResult);
   return (
     <>
       <Layout>
@@ -59,14 +67,16 @@ const Dashboard = () => {
                     <div className="p-6 bg-white">
                       <div className="flex flex-col justify-center items-center">
                         <div>
-                          <p className="text-2xl text-black">Risk Rating</p>
+                          <p className="text-2xl text-black">
+                            OverAll Risk Rating
+                          </p>
                         </div>
                         <div className="flex flex-col items-center">
                           <div>
                             <img src="/alert.svg" width={60} height={60} />
                           </div>
                           <div>
-                            <p className="text-black">High</p>
+                            <p className="text-black">{ratingResult}</p>
                           </div>
                         </div>
                       </div>
@@ -77,14 +87,11 @@ const Dashboard = () => {
                     <div className="p-6 bg-white">
                       <div className="flex flex-row justify-between">
                         <div>
-                          <h3 className="text-black">
-                            Technical Anlaysis (Deep fake)
-                          </h3>
+                          <h3 className="text-black">Deep fake</h3>
                         </div>
                         <div className="w-full max-w-[300px] bg-white rounded-full ">
                           <div className="bg-blue-600 text-xs font-medium text-blue-100 text-center mb-1 p-1.5 leading-none rounded-full">
-                            {""}
-                            45%
+                            {dfResult}
                           </div>
                           /
                         </div>
@@ -92,7 +99,7 @@ const Dashboard = () => {
                       <div className="flex flex-row justify-between">
                         <div>
                           <h1 className="text-black">
-                            Lingusistic Analysis (Social Engineering)
+                            Potential Social Engineering threat
                           </h1>
                         </div>
                         <div className="w-full max-w-[300px] bg-white rounded-full ">
@@ -102,7 +109,7 @@ const Dashboard = () => {
                           /
                         </div>
                       </div>
-                      <div className="flex flex-row justify-between">
+                      {/* <div className="flex flex-row justify-between">
                         <div>
                           <h1 className="text-black">
                             Overall (Deepfake Social Engineering attack)
@@ -115,7 +122,7 @@ const Dashboard = () => {
                           </div>
                           /
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>

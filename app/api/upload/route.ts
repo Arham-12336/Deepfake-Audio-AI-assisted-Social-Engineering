@@ -27,13 +27,13 @@ export async function POST(
     console.log("path: ", path)
     await writeFile(path, audioFile);
     const audioUrl =
-        `${process.cwd()}\\audio\\${file.name}`;
+        `${process.cwd()}/audio/${file.name}`;
     console.log("audio url:", audioUrl)
     const audio_transcript = await speechToText(audioUrl);
 
 
     const deepfake_result = new Promise((resolve, reject) => {
-        exec(`python test.py ${audioUrl}`, (error, stdout, stderr) => {
+        exec(`python3 test.py ${audioUrl}`, (error, stdout, stderr) => {
             if (error) {
                 console.error('Error executing Python script:', error);
                 reject(error);

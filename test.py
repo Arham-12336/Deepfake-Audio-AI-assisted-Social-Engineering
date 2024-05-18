@@ -5,7 +5,7 @@ from joblib import load
 import sys
 def test_audio(file_path):
     # Load the saved model
-    model_filename = "deepfake_detection_model.joblib"
+    model_filename = "deepfake_detection_model_v2.joblib"
     classifier = load(model_filename)
 
     # Function to extract features from a new audio file

@@ -1,6 +1,6 @@
 "use client";
 import Layout from "@/components/layout";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Utils } from "@/utils/utils";
 
@@ -13,6 +13,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [upload, setUploading] = useState<boolean>(false);
   const [file, setfile] = useState<File>();
+  let ratingResult;
   const handleOnSubmit = async (e: any) => {
     e.preventDefault();
     if (file === undefined) {
@@ -48,7 +49,11 @@ const Dashboard = () => {
     setfile(target.files[0]);
     setUploading(true);
   };
-  const ratingResult = utils.alertChecker(dfResult, percentage);
+  useEffect(() => {
+    ratingResult = utils.alertChecker(dfResult, percentage);
+  }, [dfResult, percentage]);
+
+  console.log("rating result : ", ratingResult, percentage, dfResult);
   console.log(percentage);
   console.log(dfResult);
   return (

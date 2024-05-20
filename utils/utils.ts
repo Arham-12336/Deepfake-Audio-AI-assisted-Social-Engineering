@@ -4,12 +4,13 @@ export class Utils {
         return final_result
     }
 
-    alertChecker = (DFresult: any, SEResult: any) => {
+    alertChecker = (DFresult: String, SEResult: any) => {
+        console.log("DF result inside Utils: ", DFresult, SEResult)
         let ratingMessage: string = '';
-        if (DFresult === 'fake' && SEResult < 50) {
+        if (DFresult === 'Fake' && SEResult < 50) {
             ratingMessage = "Medium"
         }
-        else if (DFresult === 'fake' && SEResult > 50) {
+        else if (DFresult === 'Fake' && SEResult > 50) {
             ratingMessage = 'High'
         }
         else {
